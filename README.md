@@ -48,4 +48,3 @@ src/
 
 - Tests share a single `admin` account; any test that asserts collection state wipes it in setup.
 - Ad/tracker traffic is route-blocked at the fixture level to keep runs stable.
-- See `.claude/CLAUDE.md` for full conventions and `docs/test-plans/` for the verified test plan.
