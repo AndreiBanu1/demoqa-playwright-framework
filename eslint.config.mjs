@@ -57,7 +57,6 @@ export default tseslint.config(
     },
   },
 
-
   {
     files: ['src/**/*.spec.ts'],
     ...playwright.configs['flat/recommended'],

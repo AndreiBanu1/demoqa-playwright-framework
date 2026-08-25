@@ -84,7 +84,10 @@ jobs:
   merge-reports:
     name: Merge reports
     needs: test
-    if: ${{ !cancelled() }}
+    # `!cancelled()` on its own also fires when `test` was *skipped* — e.g. the quality
+    # gate failed — and then no blob artifacts exist, the merge errors on a missing
+    # directory, and that noise masks the real failure. Require that `test` actually ran.
+    if: ${{ !cancelled() && needs.test.result != 'skipped' }}
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:

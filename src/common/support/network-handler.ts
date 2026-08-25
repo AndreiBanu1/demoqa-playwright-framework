@@ -16,10 +16,7 @@ export const AD_AND_TRACKER_PATTERNS: readonly RegExp[] = [
   /pagead/i,
 ];
 
-const UNBLOCKED_THIRD_PARTY_PATTERNS: readonly RegExp[] = [
-  /recaptcha/i,
-  /gstatic\.com/i,
-];
+const UNBLOCKED_THIRD_PARTY_PATTERNS: readonly RegExp[] = [/recaptcha/i, /gstatic\.com/i];
 
 export const IGNORED_RESPONSE_PATTERNS: readonly RegExp[] = [
   ...AD_AND_TRACKER_PATTERNS,

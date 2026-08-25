@@ -14,7 +14,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
 
   use: {
-    baseURL: process.env.BASE_URL ?? 'https://demoqa.com',
+    baseURL: process.env.BASE_URL || 'https://demoqa.com',
     actionTimeout: 15_000,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

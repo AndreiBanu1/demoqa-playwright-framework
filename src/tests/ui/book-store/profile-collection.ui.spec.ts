@@ -29,7 +29,7 @@ test.describe('Profile — unauthenticated', () => {
       await profilePage.expectUnauthBannerVisible();
       await profilePage.expectUnauthBannerHasAuthLinks();
     });
-    
+
     networkHandler.expectNoServerErrors();
   });
 });

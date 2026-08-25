@@ -89,7 +89,6 @@ export class BooksPage implements LoadablePage {
     await this.loginButton.click();
   }
 
-
   public async expectPaginationState(expected: {
     previousEnabled: boolean;
     nextEnabled: boolean;
