@@ -18,9 +18,9 @@ export class BooksPage implements LoadablePage {
     this.page = page;
     this.searchBox = page.getByPlaceholder('Type to search');
     this.loginButton = page.getByRole('button', { name: 'Login' });
-    this.booksTable = page.getByRole('table').first();
+    this.booksTable = page.getByRole('table');
     this.tableHeader = this.booksTable.locator('thead');
-    this.tableRows = this.booksTable.locator('tbody tr').filter({ has: page.locator('a') });
+    this.tableRows = this.booksTable.locator('tbody').getByRole('row');
     this.titleLinks = this.tableRows.locator('span[id^="see-book-"] a');
     this.previousButton = page.getByRole('button', { name: 'Previous' });
     this.nextButton = page.getByRole('button', { name: 'Next' });
