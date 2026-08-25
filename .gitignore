@@ -31,7 +31,12 @@ yarn-error.log*
 .mcp.json
 .tmp*
 .settings.local.json
-.claude/
+.playwright-mcp/
+# Ignore agent settings, but keep the test-suite profile: it describes this repo's
+# conventions and is read by tooling, so it belongs in version control. A `.claude/`
+# directory pattern could not be un-ignored per file, hence `.claude/*`.
+.claude/*
+!.claude/test-profile.md
 
 # IDE
 .idea
