@@ -1,16 +1,50 @@
 {
   "name": "demoqa-playwright-framework",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
+  "description": "Playwright + TypeScript UI and API test framework for demoqa.com, built on the Page Object Model with layered fixtures, AJV schema validation, and axe-core accessibility checks.",
+  "private": true,
   "license": "ISC",
   "type": "commonjs",
+  "keywords": [
+    "playwright",
+    "typescript",
+    "test-automation",
+    "api-testing",
+    "page-object-model",
+    "demoqa"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:ui": "playwright test --project=ui",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:a11y": "playwright test --grep @a11y",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:specs": "node scripts/check-spec-placement.mjs",
+    "report": "playwright show-report",
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run check:specs"
+  },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "10.0.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
-    "claude-playwright": "^0.1.4"
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "eslint": "10.9.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-playwright": "2.11.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.68.0"
   }
 }

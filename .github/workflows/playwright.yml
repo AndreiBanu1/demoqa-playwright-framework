@@ -1,27 +1,117 @@
 name: Playwright Tests
+
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    timeout-minutes: 60
+  quality:
+    name: Quality gate
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      # A spec whose directory and filename suffix disagree is claimed by no Playwright
+      # project and is skipped without any error, so this guard runs before the tests do.
+      - name: Check spec placement
+        run: npm run check:specs
+
+  test:
+    name: Tests (shard ${{ matrix.shard }}/3)
+    needs: quality
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      # No account secrets: every run provisions and deletes the users it needs
+      # (see src/common/fixtures/base.fixtures.ts). TEST_USER_PREFIX just makes the
+      # short-lived accounts recognisable per shard.
+      TEST_USER_PREFIX: ci${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # --reporter=blob is passed on the CLI so playwright.config.ts stays reporter-agnostic.
+      - name: Run Playwright tests
+        run: npx playwright test --shard=${{ matrix.shard }}/3 --reporter=blob
+
+      - name: Upload blob report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report/
+          retention-days: 1
+
+  merge-reports:
+    name: Merge reports
+    needs: test
+    if: ${{ !cancelled() }}
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: blob-report
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML report
+        run: npx playwright merge-reports --reporter=html ./blob-report
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://demoqa.com/schemas/book.schema.json",
+  "title": "Book",
+  "description": "Canonical book shape shared by GET /BookStore/v1/Book, GET /BookStore/v1/Books and GET /Account/v1/User/{userId}. Registered with ajv in @api/support/api-assertions so other schemas can $ref it.",
+  "type": "object",
+  "required": [
+    "isbn",
+    "title",
+    "subTitle",
+    "author",
+    "publish_date",
+    "publisher",
+    "pages",
+    "description",
+    "website"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "isbn": { "type": "string", "pattern": "^[0-9]{13}$" },
+    "title": { "type": "string", "minLength": 1 },
+    "subTitle": { "type": "string", "minLength": 1 },
+    "author": { "type": "string", "minLength": 1 },
+    "publish_date": { "type": "string", "format": "date-time" },
+    "publisher": { "type": "string", "minLength": 1 },
+    "pages": { "type": "integer", "minimum": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "website": { "type": "string", "format": "uri" }
+  }
+}

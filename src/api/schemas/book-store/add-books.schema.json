@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "POST /BookStore/v1/Books — 201 response",
+  "description": "Only the ISBNs of the newly added books are echoed back, not the full book objects.",
+  "type": "object",
+  "required": ["books"],
+  "additionalProperties": false,
+  "properties": {
+    "books": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["isbn"],
+        "additionalProperties": false,
+        "properties": {
+          "isbn": { "type": "string", "pattern": "^[0-9]{13}$" }
+        }
+      }
+    }
+  }
+}
