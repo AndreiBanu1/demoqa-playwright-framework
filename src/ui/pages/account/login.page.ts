@@ -12,10 +12,10 @@ export class LoginPage implements LoadablePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.userNameInput = page.locator('#userForm > div:nth-child(1) input.form-control');
-    this.passwordInput = page.locator('#userForm > div:nth-child(2) input.form-control');
-    this.loginButton = page.locator('#userForm > div:nth-child(3) button.btn-primary').first();
-    this.newUserButton = page.locator('#userForm > div:nth-child(3) button.btn-primary').last();
+    this.userNameInput = page.getByPlaceholder('UserName');
+    this.passwordInput = page.getByPlaceholder('Password');
+    this.loginButton = page.getByRole('button', { name: 'Login' });
+    this.newUserButton = page.getByRole('button', { name: 'New User' });
     this.invalidCredsError = page.getByText('Invalid username or password!');
   }
 

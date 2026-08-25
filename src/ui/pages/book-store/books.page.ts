@@ -16,17 +16,15 @@ export class BooksPage implements LoadablePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.searchBox = page.locator('div.ReactTable input#searchBox');
+    this.searchBox = page.getByPlaceholder('Type to search');
     this.loginButton = page.getByRole('button', { name: 'Login' });
-    this.booksTable = page.locator('div.ReactTable div.rt-table');
-    this.tableHeader = this.booksTable.locator('div.rt-thead');
-    this.tableRows = this.booksTable
-      .locator('div.rt-tbody div.rt-tr-group')
-      .filter({ has: page.locator('a') });
-    this.titleLinks = this.tableRows.locator('div.rt-td:nth-child(2) a');
-    this.previousButton = page.locator('div.-previous > button');
-    this.nextButton = page.locator('div.-next > button');
-    this.pageIndicator = page.locator('span.-pageInfo');
+    this.booksTable = page.getByRole('table');
+    this.tableHeader = this.booksTable.locator('thead');
+    this.tableRows = this.booksTable.locator('tbody').getByRole('row');
+    this.titleLinks = this.tableRows.locator('span[id^="see-book-"] a');
+    this.previousButton = page.getByRole('button', { name: 'Previous' });
+    this.nextButton = page.getByRole('button', { name: 'Next' });
+    this.pageIndicator = page.getByText(/^Page \d+ of \d+$/);
   }
 
   public async goto(): Promise<void> {
