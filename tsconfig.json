@@ -1,16 +1,27 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2022",
     "module": "commonjs",
-    "lib": ["ES2020"],
+    "lib": ["ES2022", "DOM"],
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "outDir": "dist",
-    "rootDir": ".",
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
     "types": ["node"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    // No `baseUrl`: it is deprecated in TypeScript 6 and errors under TS 7.
+    // `paths` entries are resolved relative to this file's directory instead.
+    "paths": {
+      "@api/*": ["./src/api/*"],
+      "@ui/*": ["./src/ui/*"],
+      "@common/*": ["./src/common/*"]
+    }
   },
-  "include": ["src/**/*", "playwright.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "playwright.config.ts", "eslint.config.mjs"],
+  "exclude": ["node_modules"]
 }

@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GET /BookStore/v1/Book?ISBN={isbn} — 200 response",
+  "description": "The payload is a bare book object, so this schema is an alias of the shared book contract.",
+  "$ref": "https://demoqa.com/schemas/book.schema.json"
+}

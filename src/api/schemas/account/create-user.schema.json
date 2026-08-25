@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "POST /Account/v1/User — 201 response",
+  "type": "object",
+  "required": ["userID", "username", "books"],
+  "additionalProperties": false,
+  "properties": {
+    "userID": { "type": "string", "format": "uuid" },
+    "username": { "type": "string", "minLength": 1 },
+    "books": {
+      "type": "array",
+      "items": { "$ref": "https://demoqa.com/schemas/book.schema.json" }
+    }
+  }
+}
