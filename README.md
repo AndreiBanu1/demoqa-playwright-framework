@@ -5,6 +5,8 @@ application (catalog, login/register, profile, collection management) is backed 
 layers are exercised from a single TypeScript codebase with shared configuration, fixtures and
 assertion helpers.
 
+For the full agnostic version of Claude skills, please checK: [playwright-suite-skills](https://github.com/AndreiBanu1/playwright-suite-skills)
+
 ## What's covered
 
 **UI — `src/tests/ui/`**
