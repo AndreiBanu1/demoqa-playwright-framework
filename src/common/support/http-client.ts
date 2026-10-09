@@ -1,5 +1,6 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { TestConfig } from '@common/config/test-config';
+import { baseLogger as log } from '../../observability/logger';
 
 export interface ApiResponse<T> {
   status: number;
@@ -42,14 +43,34 @@ export class HttpClient {
     options: RequestOptions,
   ): Promise<ApiResponse<T>> {
     const url = path.startsWith('http') ? path : `${this.config.baseURL}${path}`;
-    const response = await this.request.fetch(url, {
+    const start = Date.now();
+    let response: APIResponse;
+    try {
+      response = await this.request.fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+          ...options.headers,
+        },
+        data: options.body as Record<string, unknown>,
+      });
+    } catch (error) {
+      log.warn({
+        event: 'api_call_error',
+        method,
+        path: new URL(url).pathname,
+        durationMs: Date.now() - start,
+        err: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+    log.debug({
+      event: 'api_call',
       method,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
-        ...options.headers,
-      },
-      data: options.body as Record<string, unknown>,
+      path: new URL(url).pathname,
+      status: response.status(),
+      durationMs: Date.now() - start,
     });
     const contentType = response.headers()['content-type'] ?? '';
     const body: unknown = contentType.includes('application/json')

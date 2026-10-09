@@ -134,7 +134,7 @@ its own user:
 - **Act** — tests mutate only their own worker's collection. The auto `resetCollection` fixture
   empties it before each authenticated test, so tests sharing a worker stay independent too.
 - **Teardown** — the same fixture calls `DELETE /Account/v1/User/{userId}`. Cleanup is best-effort:
-  a failed delete warns instead of failing the run. Set `LOG_WORKER_USERS=1` to print every
+  a failed delete warns instead of failing the run. Set `LOG_LEVEL=debug` to log every
   create/delete pair.
 
 Authentication is declarative. demoqa keeps its session in cookies (`token`, `expires`, `userID`,

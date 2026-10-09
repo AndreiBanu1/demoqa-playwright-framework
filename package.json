@@ -46,5 +46,9 @@
     "prettier": "3.9.6",
     "typescript": "6.0.3",
     "typescript-eslint": "8.68.0"
+  },
+  "dependencies": {
+    "pino": "^10.4.0",
+    "pino-pretty": "^13.2.0"
   }
 }

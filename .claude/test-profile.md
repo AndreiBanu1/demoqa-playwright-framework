@@ -29,7 +29,7 @@ tagged `@a11y`, and run as part of the `ui` project.
   Auth is an option, not a login flow: `test.use({ authenticated: true })` swaps `storageState` for
   cookies built from `workerUser`. `freshUser` exists because demoqa's GenerateToken invalidates the
   previous token, so a UI login as `workerUser` would break its worker-mates.
-- Data sources: env vars only (`BASE_URL`, `TEST_USER_PREFIX`, `LOG_WORKER_USERS`, `CI`) read via
+- Data sources: env vars only (`BASE_URL`, `TEST_USER_PREFIX`, `LOG_LEVEL`, `CI`) read via
   `src/common/config/test-config.ts`; users generated at runtime by `TestDataGenerator`
   (`src/common/support/data-generator.ts`); no `.env`, no fixture/data JSON, no factories. Domain
   constants (anchor ISBNs, error codes/messages) are `const` literals at the top of each spec.

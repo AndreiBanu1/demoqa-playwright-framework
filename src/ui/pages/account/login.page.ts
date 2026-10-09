@@ -1,6 +1,7 @@
 import { Locator, Page, expect } from '@playwright/test';
 import { LoadablePage } from '@ui/pages/loadable-page';
 import { expectAllVisible } from '@ui/support/page-assertions';
+import { baseLogger as log } from '../../../observability/logger';
 
 export class LoginPage implements LoadablePage {
   private readonly page: Page;
@@ -47,6 +48,7 @@ export class LoginPage implements LoadablePage {
     await this.fillUsername(username);
     await this.fillPassword(password);
     await this.clickLogin();
+    log.info({ event: 'login_submitted', username });
   }
 
   public async expectInvalidCredentialsError(): Promise<void> {

@@ -2,6 +2,7 @@ import { Locator, Page, expect } from '@playwright/test';
 import { LoadablePage } from '@ui/pages/loadable-page';
 import { expectAllVisible } from '@ui/support/page-assertions';
 import { DeleteConfirmationModal } from '@ui/components/delete-confirmation.modal';
+import { baseLogger as log } from '../../../observability/logger';
 
 export class ProfilePage implements LoadablePage {
   private readonly page: Page;
@@ -65,6 +66,7 @@ export class ProfilePage implements LoadablePage {
 
   public async clickDeleteAllBooks(): Promise<void> {
     await this.deleteAllBooksButton.click();
+    log.debug({ event: 'delete_all_books_clicked' });
   }
 
   public async clickDeleteRow(isbn: string): Promise<void> {
