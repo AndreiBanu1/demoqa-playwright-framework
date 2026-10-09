@@ -1,4 +1,5 @@
 import { Page, Response, expect } from '@playwright/test';
+import { baseLogger as log } from '../../observability/logger';
 
 export const AD_AND_TRACKER_PATTERNS: readonly RegExp[] = [
   /googlesyndication\.com/i,
@@ -28,7 +29,6 @@ export function isAdOrTrackerUrl(url: string): boolean {
 }
 
 export interface NetworkHandlerOptions {
-  logErrors?: boolean;
   ignoreUrlPatterns?: RegExp[];
 }
 
@@ -41,11 +41,9 @@ export interface CapturedError {
 export class NetworkHandler {
   private readonly errors: CapturedError[] = [];
   private readonly ignore: RegExp[];
-  private readonly logErrors: boolean;
 
   constructor(page: Page, options: NetworkHandlerOptions = {}) {
     this.ignore = [...IGNORED_RESPONSE_PATTERNS, ...(options.ignoreUrlPatterns ?? [])];
-    this.logErrors = options.logErrors ?? false;
 
     page.on('response', (response) => this.handleResponse(response));
   }
@@ -84,8 +82,13 @@ export class NetworkHandler {
     };
     this.errors.push(error);
 
-    if (this.logErrors) {
-      console.warn(`[networkHandler] ${error.method} ${error.status} ${error.url}`);
-    }
+    const { host, pathname } = new URL(url);
+    log.warn({
+      event: 'page_http_error',
+      method: error.method,
+      status: error.status,
+      host,
+      path: pathname,
+    });
   }
 }

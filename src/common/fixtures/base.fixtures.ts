@@ -5,6 +5,7 @@ import { TestConfig, loadTestConfig } from '@common/config/test-config';
 import { TestDataGenerator } from '@common/support/data-generator';
 import { AccountService } from '@api/services/account.service';
 import { BookStoreService } from '@api/services/book-store.service';
+import { baseLogger as log } from '../../observability/logger';
 
 export interface TestUser {
   userId: string;
@@ -53,12 +54,6 @@ function toStorageState(user: TestUser, baseURL: string): StorageState {
   };
 }
 
-function logUserLifecycle(message: string): void {
-  if (process.env.LOG_WORKER_USERS) {
-    console.log(message);
-  }
-}
-
 async function provisionUser(
   accountService: AccountService,
   username: string,
@@ -97,18 +92,27 @@ async function decommissionUser(accountService: AccountService, user: TestUser):
       refreshed.body.token ?? user.token,
     );
     if (deleted.status >= 400) {
-      console.warn(
-        `Failed to delete user ${user.userId} (status ${deleted.status}); it may linger.`,
-      );
+      log.warn({
+        event: 'user_delete_failed',
+        userId: user.userId,
+        username: user.username,
+        status: deleted.status,
+      });
     } else {
-      logUserLifecycle(
-        `user deleted id=${user.userId} name=${user.username} status=${deleted.status}`,
-      );
+      log.debug({
+        event: 'user_deleted',
+        userId: user.userId,
+        username: user.username,
+        status: deleted.status,
+      });
     }
   } catch (error) {
-    console.warn(
-      `Failed to delete user ${user.userId}: ${error instanceof Error ? error.message : String(error)}`,
-    );
+    log.warn({
+      event: 'user_delete_error',
+      userId: user.userId,
+      username: user.username,
+      err: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 
@@ -130,10 +134,13 @@ export const test = base.extend<CoreFixtures, CoreWorkerFixtures>({
 
       try {
         const user = await provisionUser(accountService, username, password);
-        logUserLifecycle(
-          `worker-user created worker=${workerInfo.workerIndex} id=${user.userId} name=${user.username}`,
-        );
-
+        log.debug({
+          event: 'user_provisioned',
+          scope: 'worker',
+          worker: workerInfo.workerIndex,
+          userId: user.userId,
+          username: user.username,
+        });
         await use(user);
 
         await decommissionUser(accountService, user);
@@ -166,9 +173,13 @@ export const test = base.extend<CoreFixtures, CoreWorkerFixtures>({
       `${testConfig.userPrefix}t${testInfo.workerIndex}`,
     );
     const user = await provisionUser(accountService, username, password);
-    logUserLifecycle(
-      `fresh-user created worker=${testInfo.workerIndex} id=${user.userId} name=${user.username}`,
-    );
+    log.debug({
+      event: 'user_provisioned',
+      scope: 'test',
+      worker: testInfo.workerIndex,
+      userId: user.userId,
+      username: user.username,
+    });
 
     await use(user);
 
